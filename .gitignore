@@ -36,4 +36,4 @@ ehthumbs.db
 # ============ #
 # Android APK  #
 # ============ #
-AndroidApp.apk
+*.apk
