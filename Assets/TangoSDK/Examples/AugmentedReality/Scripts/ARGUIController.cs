@@ -74,6 +74,8 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     private Rect m_hideAllRect;
 
+    private bool m_menuShown = true;
+
     /// <summary>
     /// Unity Start() callback, we set up some initial values here.
     /// </summary>
@@ -101,35 +103,42 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public void OnGUI()
     {
-	float centerX = (Screen.width / 2);
-	float centerY = (Screen.height / 2);
-	float menuWidth = 100;
-	float menuHeight = 150;
-	float menuX = centerX - (menuWidth / 2);
-	float menuY = centerY - (menuHeight / 2);
-	float menuPadding = 10;
-	float buttonStartY = menuY + menuPadding * 3;
-	float buttonWidth = 80;
-	float buttonHeight = 20;
-	float buttonSpacing = 30;
-
-	GUI.Box(new Rect(menuX, menuY, menuWidth, menuHeight), "Choose:");
-	if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 0, buttonWidth, buttonHeight), "Option 1"))
-	{
-		print ("option 1");
-	}
-	if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 1, buttonWidth, buttonHeight), "Option 2"))
-	{
-		print ("option 2");
-	}
-	if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 2, buttonWidth, buttonHeight), "Option 3"))
-	{
-		print ("option 3");
-	}
-	if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 3, buttonWidth, buttonHeight), "Option 4"))
-	{
-		print ("option 4");
-	}
+        float centerX = (Screen.width / 2);
+        float centerY = (Screen.height / 2);
+        float menuWidth = 100;
+        float menuHeight = 150;
+        float menuX = centerX - (menuWidth / 2);
+        float menuY = centerY - (menuHeight / 2);
+        float menuPadding = 10;
+        float buttonStartY = menuY + menuPadding * 3;
+        float buttonWidth = 80;
+        float buttonHeight = 20;
+        float buttonSpacing = 30;
+        
+        if (m_menuShown)
+        {
+						GUI.Box(new Rect(menuX, menuY, menuWidth, menuHeight), "Choose:");
+						if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 0, buttonWidth, buttonHeight), "Option 1"))
+						{
+								print ("option 1");
+								m_menuShown = false;
+						}
+						if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 1, buttonWidth, buttonHeight), "Option 2"))
+						{
+								print ("option 2");
+								m_menuShown = false;
+						}
+						if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 2, buttonWidth, buttonHeight), "Option 3"))
+						{
+								print ("option 3");
+								m_menuShown = false;
+						}
+						if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 3, buttonWidth, buttonHeight), "Option 4"))
+						{
+								print ("option 4");
+								m_menuShown = false;
+						}
+        }
 
         if (m_selectedMarker != null)
         {
