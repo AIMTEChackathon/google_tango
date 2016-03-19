@@ -181,6 +181,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                 {
                     marker.SendMessage("Hide");
                 }
+                m_menuShown = false;
             }
         }
         else
