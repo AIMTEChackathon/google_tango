@@ -117,27 +117,27 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
         
         if (m_menuShown)
         {
-						GUI.Box(new Rect(menuX, menuY, menuWidth, menuHeight), "Choose:");
-						if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 0, buttonWidth, buttonHeight), "Option 1"))
-						{
-								print ("option 1");
-								m_menuShown = false;
-						}
-						if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 1, buttonWidth, buttonHeight), "Option 2"))
-						{
-								print ("option 2");
-								m_menuShown = false;
-						}
-						if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 2, buttonWidth, buttonHeight), "Option 3"))
-						{
-								print ("option 3");
-								m_menuShown = false;
-						}
-						if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 3, buttonWidth, buttonHeight), "Option 4"))
-						{
-								print ("option 4");
-								m_menuShown = false;
-						}
+            GUI.Box(new Rect(menuX, menuY, menuWidth, menuHeight), "Choose:");
+            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 0, buttonWidth, buttonHeight), "Option 1"))
+            {
+                print ("option 1");
+                m_menuShown = false;
+            }
+            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 1, buttonWidth, buttonHeight), "Option 2"))
+            {
+                print ("option 2");
+                m_menuShown = false;
+            }
+            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 2, buttonWidth, buttonHeight), "Option 3"))
+            {
+                print ("option 3");
+                m_menuShown = false;
+            }
+            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 3, buttonWidth, buttonHeight), "Option 4"))
+            {
+                print ("option 4");
+                m_menuShown = false;
+            }
         }
 
         if (m_selectedMarker != null)
