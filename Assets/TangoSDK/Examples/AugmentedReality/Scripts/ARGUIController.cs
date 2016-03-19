@@ -81,7 +81,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     private Rect m_hideAllRect;
 
-    private bool m_menuShown = true;
+    private bool m_menuShown = false;
 
     /// <summary>
     /// Unity Start() callback, we set up some initial values here.
