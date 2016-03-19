@@ -31,6 +31,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     public const float UI_BUTTON_SIZE_X = 250.0f;
     public const float UI_BUTTON_SIZE_Y = 130.0f;
     public const float UI_BUTTON_GAP_X = 5.0f;
+    public const String FONT_SIZE = "<size=40>";
 
     /// <summary>
     /// The marker prefab to place on taps.
@@ -74,7 +75,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     private Rect m_hideAllRect;
 
-    private bool m_menuShown = true;
+    private bool m_menuShown = false;
 
     /// <summary>
     /// Unity Start() callback, we set up some initial values here.
@@ -103,37 +104,38 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public void OnGUI()
     {
+        float scale = 3.5f;
         float centerX = (Screen.width / 2);
         float centerY = (Screen.height / 2);
-        float menuWidth = 100;
-        float menuHeight = 150;
+        float menuPadding = 20;
+        float buttonHeight = 20 * scale;
+        float buttonSpacing = buttonHeight + menuPadding;
+        float menuWidth = 100 * scale;
+        float menuHeight = menuPadding * 3 + buttonSpacing * 4;
+        float buttonWidth = menuWidth - menuPadding * 2;
         float menuX = centerX - (menuWidth / 2);
         float menuY = centerY - (menuHeight / 2);
-        float menuPadding = 10;
         float buttonStartY = menuY + menuPadding * 3;
-        float buttonWidth = 80;
-        float buttonHeight = 20;
-        float buttonSpacing = 30;
         
         if (m_menuShown)
         {
-            GUI.Box(new Rect(menuX, menuY, menuWidth, menuHeight), "Choose:");
-            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 0, buttonWidth, buttonHeight), "Option 1"))
+            GUI.Box(new Rect(menuX, menuY, menuWidth, menuHeight), FONT_SIZE + "Choose:</size>");
+            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 0, buttonWidth, buttonHeight), FONT_SIZE + "Option 1</size>"))
             {
                 print ("option 1");
                 m_menuShown = false;
             }
-            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 1, buttonWidth, buttonHeight), "Option 2"))
+            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 1, buttonWidth, buttonHeight), FONT_SIZE + "Option 2</size>"))
             {
                 print ("option 2");
                 m_menuShown = false;
             }
-            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 2, buttonWidth, buttonHeight), "Option 3"))
+            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 2, buttonWidth, buttonHeight), FONT_SIZE + "Option 3</size>"))
             {
                 print ("option 3");
                 m_menuShown = false;
             }
-            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 3, buttonWidth, buttonHeight), "Option 4"))
+            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 3, buttonWidth, buttonHeight), FONT_SIZE + "Option 4</size>"))
             {
                 print ("option 4");
                 m_menuShown = false;
@@ -151,7 +153,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             screenRect.yMin = Mathf.Min(yMin, yMax);
             screenRect.yMax = Mathf.Max(yMin, yMax);
 
-            if (GUI.Button(screenRect, "<size=30>Hide</size>"))
+            if (GUI.Button(screenRect, FONT_SIZE + "Hide</size>"))
             {
                 m_selectedMarker.SendMessage("Hide");
                 m_selectedMarker = null;
@@ -173,7 +175,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                                      Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
                                      UI_BUTTON_SIZE_X,
                                      UI_BUTTON_SIZE_Y);
-            if (GUI.Button(m_hideAllRect, "<size=30>Hide All</size>"))
+            if (GUI.Button(m_hideAllRect, FONT_SIZE + "Hide All</size>"))
             {
                 foreach (ARMarker marker in GameObject.FindObjectsOfType<ARMarker>())
                 {
@@ -251,6 +253,12 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     private void _UpdateLocationMarker()
     {
+        if (m_menuShown)
+        {
+            // ignore touch input when menu is shown, the button will handle it
+            return;
+        }
+        
         if (Input.touchCount == 1)
         {
             // Single tap -- place new location or select existing location.
@@ -291,6 +299,8 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                 normalizedPosition.x /= Screen.width;
                 normalizedPosition.y /= Screen.height;
                 touchEffectRectTransform.anchorMin = touchEffectRectTransform.anchorMax = normalizedPosition;
+                
+                m_menuShown = true;
             }
         }
     }
