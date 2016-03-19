@@ -28,35 +28,9 @@ using UnityEngine;
 /// </summary>
 public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 {
-    // Constant value for controlling the position and size of debug overlay.
-    public const float UI_LABEL_START_X = 15.0f;
-    public const float UI_LABEL_START_Y = 15.0f;
-    public const float UI_LABEL_SIZE_X = 1920.0f;
-    public const float UI_LABEL_SIZE_Y = 35.0f;
-    public const float UI_LABEL_GAP_Y = 3.0f;
     public const float UI_BUTTON_SIZE_X = 250.0f;
     public const float UI_BUTTON_SIZE_Y = 130.0f;
     public const float UI_BUTTON_GAP_X = 5.0f;
-    public const float UI_CAMERA_BUTTON_OFFSET = UI_BUTTON_SIZE_X + UI_BUTTON_GAP_X;
-    public const float UI_LABEL_OFFSET = UI_LABEL_GAP_Y + UI_LABEL_SIZE_Y;
-    public const float UI_FPS_LABEL_START_Y = UI_LABEL_START_Y + UI_LABEL_OFFSET;
-    public const float UI_EVENT_LABEL_START_Y = UI_FPS_LABEL_START_Y + UI_LABEL_OFFSET;
-    public const float UI_POSE_LABEL_START_Y = UI_EVENT_LABEL_START_Y + UI_LABEL_OFFSET;
-    public const float UI_DEPTH_LABLE_START_Y = UI_POSE_LABEL_START_Y + UI_LABEL_OFFSET;
-    public const string UI_FLOAT_FORMAT = "F3";
-    public const string UI_FONT_SIZE = "<size=25>";
-
-    public const float UI_TANGO_VERSION_X = UI_LABEL_START_X;
-    public const float UI_TANGO_VERSION_Y = UI_LABEL_START_Y;
-    public const float UI_TANGO_APP_SPECIFIC_START_X = UI_TANGO_VERSION_X;
-    public const float UI_TANGO_APP_SPECIFIC_START_Y = UI_TANGO_VERSION_Y + (UI_LABEL_OFFSET * 2);
-
-    public const string UX_SERVICE_VERSION = "Service version: {0}";
-    public const string UX_TANGO_SERVICE_VERSION = "Tango service version: {0}";
-    public const string UX_TANGO_SYSTEM_EVENT = "Tango system event: {0}";
-    public const string UX_TARGET_TO_BASE_FRAME = "Target->{0}, Base->{1}:";
-    public const string UX_STATUS = "\tstatus: {0}, count: {1}, position (m): [{2}], orientation: [{3}]";
-    public const float SECOND_TO_MILLISECOND = 1000.0f;
 
     /// <summary>
     /// The marker prefab to place on taps.
@@ -78,17 +52,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public TangoPointCloud m_pointCloud;
 
-    private const float FPS_UPDATE_FREQUENCY = 1.0f;
-    private string m_fpsText;
-    private int m_currentFPS;
-    private int m_framesSinceUpdate;
-    private float m_accumulation;
-    private float m_currentTime;
-
     private TangoApplication m_tangoApplication;
-    private TangoARPoseController m_tangoPose;
-    private string m_tangoServiceVersion;
-    private ARCameraPostProcess m_arCameraPostProcess;
 
     /// <summary>
     /// If set, then the depth camera is on and we are waiting for the next depth update.
@@ -111,24 +75,11 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     private Rect m_hideAllRect;
 
     /// <summary>
-    /// If set, show debug text.
-    /// </summary>
-    private bool m_showDebug = false;
-
-    /// <summary>
     /// Unity Start() callback, we set up some initial values here.
     /// </summary>
     public void Start()
     {
-        m_currentFPS = 0;
-        m_framesSinceUpdate = 0;
-        m_currentTime = 0.0f;
-        m_fpsText = "FPS = Calculating";
         m_tangoApplication = FindObjectOfType<TangoApplication>();
-        m_tangoPose = FindObjectOfType<TangoARPoseController>();
-        m_arCameraPostProcess = FindObjectOfType<ARCameraPostProcess>();
-        m_tangoServiceVersion = TangoApplication.GetTangoServiceVersion();
-
         m_tangoApplication.Register(this);
     }
 
@@ -137,18 +88,6 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public void Update()
     {
-        m_currentTime += Time.deltaTime;
-        ++m_framesSinceUpdate;
-        m_accumulation += Time.timeScale / Time.deltaTime;
-        if (m_currentTime >= FPS_UPDATE_FREQUENCY)
-        {
-            m_currentFPS = (int)(m_accumulation / m_framesSinceUpdate);
-            m_currentTime = 0.0f;
-            m_framesSinceUpdate = 0;
-            m_accumulation = 0.0f;
-            m_fpsText = "FPS: " + m_currentFPS;
-        }
-
         _UpdateLocationMarker();
 
         if (Input.GetKey(KeyCode.Escape))
@@ -162,62 +101,10 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public void OnGUI()
     {
-        Rect distortionButtonRec = new Rect(UI_BUTTON_GAP_X,
-                                            Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
-                                            UI_BUTTON_SIZE_X,
-                                            UI_BUTTON_SIZE_Y);
-        string isOn = m_arCameraPostProcess.enabled ? "Off" : "On";
-        if (GUI.Button(distortionButtonRec,
-                       UI_FONT_SIZE + "Turn Distortion " + isOn + "</size>"))
-        {
-            m_arCameraPostProcess.enabled = !m_arCameraPostProcess.enabled;
-        }
-
-        if (m_showDebug && m_tangoApplication.HasRequestedPermissions())
-        {
-            Color oldColor = GUI.color;
-            GUI.color = Color.white;
-
-            GUI.color = Color.black;
-            GUI.Label(new Rect(UI_LABEL_START_X,
-                               UI_LABEL_START_Y,
-                               UI_LABEL_SIZE_X,
-                               UI_LABEL_SIZE_Y),
-                      UI_FONT_SIZE + String.Format(UX_TANGO_SERVICE_VERSION, m_tangoServiceVersion) + "</size>");
-
-            GUI.Label(new Rect(UI_LABEL_START_X,
-                               UI_FPS_LABEL_START_Y,
-                               UI_LABEL_SIZE_X,
-                               UI_LABEL_SIZE_Y),
-                      UI_FONT_SIZE + m_fpsText + "</size>");
-
-            // MOTION TRACKING
-            GUI.Label(new Rect(UI_LABEL_START_X,
-                               UI_POSE_LABEL_START_Y - UI_LABEL_OFFSET,
-                               UI_LABEL_SIZE_X,
-                               UI_LABEL_SIZE_Y),
-                      UI_FONT_SIZE + String.Format(UX_TARGET_TO_BASE_FRAME, "Device", "Start") + "</size>");
-
-            Vector3 pos = m_tangoPose.transform.position;
-            Quaternion quat = m_tangoPose.transform.rotation;
-            string positionString = pos.x.ToString(UI_FLOAT_FORMAT) + ", " +
-                pos.y.ToString(UI_FLOAT_FORMAT) + ", " +
-                    pos.z.ToString(UI_FLOAT_FORMAT);
-            string rotationString = quat.x.ToString(UI_FLOAT_FORMAT) + ", " +
-                quat.y.ToString(UI_FLOAT_FORMAT) + ", " +
-                    quat.z.ToString(UI_FLOAT_FORMAT) + ", " +
-                    quat.w.ToString(UI_FLOAT_FORMAT);
-            string statusString = String.Format(UX_STATUS,
-                                                _GetLoggingStringFromPoseStatus(m_tangoPose.m_poseStatus),
-                                                _GetLoggingStringFromFrameCount(m_tangoPose.m_poseCount),
-                                                positionString, rotationString);
-            GUI.Label(new Rect(UI_LABEL_START_X,
-                               UI_POSE_LABEL_START_Y,
-                               UI_LABEL_SIZE_X,
-                               UI_LABEL_SIZE_Y),
-                      UI_FONT_SIZE + statusString + "</size>");
-            GUI.color = oldColor;
-        }
+	if (GUI.Button (new Rect (10,70, 100, 20), "This is text"))
+	{
+		
+	}
 
         if (m_selectedMarker != null)
         {
@@ -326,111 +213,6 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     }
 
     /// <summary>
-    /// Construct readable string from TangoPoseStatusType.
-    /// </summary>
-    /// <param name="status">Pose status from Tango.</param>
-    /// <returns>Readable string corresponding to status.</returns>
-    private string _GetLoggingStringFromPoseStatus(TangoEnums.TangoPoseStatusType status)
-    {
-        string statusString;
-        switch (status)
-        {
-        case TangoEnums.TangoPoseStatusType.TANGO_POSE_INITIALIZING:
-            statusString = "initializing";
-            break;
-        case TangoEnums.TangoPoseStatusType.TANGO_POSE_INVALID:
-            statusString = "invalid";
-            break;
-        case TangoEnums.TangoPoseStatusType.TANGO_POSE_UNKNOWN:
-            statusString = "unknown";
-            break;
-        case TangoEnums.TangoPoseStatusType.TANGO_POSE_VALID:
-            statusString = "valid";
-            break;
-        default:
-            statusString = "N/A";
-            break;
-        }
-
-        return statusString;
-    }
-
-    /// <summary>
-    /// Reformat string from vector3 type for data logging.
-    /// </summary>
-    /// <param name="vec">Position to display.</param>
-    /// <returns>Readable string corresponding to vec.</returns>
-    private string _GetLoggingStringFromVec3(Vector3 vec)
-    {
-        if (vec == Vector3.zero)
-        {
-            return "N/A";
-        }
-        else
-        {
-            return string.Format("{0}, {1}, {2}",
-                                 vec.x.ToString(UI_FLOAT_FORMAT),
-                                 vec.y.ToString(UI_FLOAT_FORMAT),
-                                 vec.z.ToString(UI_FLOAT_FORMAT));
-        }
-    }
-
-    /// <summary>
-    /// Reformat string from quaternion type for data logging.
-    /// </summary>
-    /// <param name="quat">Quaternion to display.</param>
-    /// <returns>Readable string corresponding to quat.</returns>
-    private string _GetLoggingStringFromQuaternion(Quaternion quat)
-    {
-        if (quat == Quaternion.identity)
-        {
-            return "N/A";
-        }
-        else
-        {
-            return string.Format("{0}, {1}, {2}, {3}",
-                                 quat.x.ToString(UI_FLOAT_FORMAT),
-                                 quat.y.ToString(UI_FLOAT_FORMAT),
-                                 quat.z.ToString(UI_FLOAT_FORMAT),
-                                 quat.w.ToString(UI_FLOAT_FORMAT));
-        }
-    }
-
-    /// <summary>
-    /// Return a string to the get logging from frame count.
-    /// </summary>
-    /// <returns>The get logging string from frame count.</returns>
-    /// <param name="frameCount">Frame count.</param>
-    private string _GetLoggingStringFromFrameCount(int frameCount)
-    {
-        if (frameCount == -1.0)
-        {
-            return "N/A";
-        }
-        else
-        {
-            return frameCount.ToString();
-        }
-    }
-
-    /// <summary>
-    /// Return a string to get logging of FrameDeltaTime.
-    /// </summary>
-    /// <returns>The get loggin string from frame delta time.</returns>
-    /// <param name="frameDeltaTime">Frame delta time.</param>
-    private string _GetLogginStringFromFrameDeltaTime(float frameDeltaTime)
-    {
-        if (frameDeltaTime == -1.0)
-        {
-            return "N/A";
-        }
-        else
-        {
-            return (frameDeltaTime * SECOND_TO_MILLISECOND).ToString(UI_FLOAT_FORMAT);
-        }
-    }
-
-    /// <summary>
     /// Update location marker state.
     /// </summary>
     private void _UpdateLocationMarker()
@@ -476,26 +258,6 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                 normalizedPosition.y /= Screen.height;
                 touchEffectRectTransform.anchorMin = touchEffectRectTransform.anchorMax = normalizedPosition;
             }
-        }
-
-        if (Input.touchCount == 2)
-        {
-            // Two taps -- toggle debug text
-            Touch t0 = Input.GetTouch(0);
-            Touch t1 = Input.GetTouch(1);
-
-            if (t0.phase != TouchPhase.Began && t1.phase != TouchPhase.Began)
-            {
-                return;
-            }
-
-            m_showDebug = !m_showDebug;
-            return;
-        }
-
-        if (Input.touchCount != 1)
-        {
-            return;
         }
     }
 
