@@ -53,6 +53,12 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public TangoPointCloud m_pointCloud;
 
+    public Texture2D m_iconWheel;
+    public Texture2D m_iconSteeringWheel;
+    public Texture2D m_iconSilencer;
+    public Texture2D m_iconPlug;
+
+
     private TangoApplication m_tangoApplication;
 
     /// <summary>
@@ -75,7 +81,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     private Rect m_hideAllRect;
 
-    private bool m_menuShown = false;
+    private bool m_menuShown = true;
 
     /// <summary>
     /// Unity Start() callback, we set up some initial values here.
@@ -104,13 +110,13 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public void OnGUI()
     {
-        float scale = 3.5f;
+        float scale = 4.5f;
         float centerX = (Screen.width / 2);
         float centerY = (Screen.height / 2);
         float menuPadding = 20;
         float buttonHeight = 20 * scale;
         float buttonSpacing = buttonHeight + menuPadding;
-        float menuWidth = 100 * scale;
+        float menuWidth = 150 * scale;
         float menuHeight = menuPadding * 3 + buttonSpacing * 4;
         float buttonWidth = menuWidth - menuPadding * 2;
         float menuX = centerX - (menuWidth / 2);
@@ -120,22 +126,22 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
         if (m_menuShown)
         {
             GUI.Box(new Rect(menuX, menuY, menuWidth, menuHeight), FONT_SIZE + "Choose:</size>");
-            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 0, buttonWidth, buttonHeight), FONT_SIZE + "Option 1</size>"))
+            if (GUI.Button(new Rect(menuX + menuPadding, buttonStartY + buttonSpacing * 0, buttonWidth, buttonHeight), new GUIContent(FONT_SIZE + "Wheel</size>", m_iconWheel)))
             {
                 print ("option 1");
                 m_menuShown = false;
             }
-            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 1, buttonWidth, buttonHeight), FONT_SIZE + "Option 2</size>"))
-            {
+            if (GUI.Button(new Rect(menuX + menuPadding, buttonStartY + buttonSpacing * 1, buttonWidth, buttonHeight), new GUIContent(FONT_SIZE + "Steering Wheel</size>", m_iconSteeringWheel)))
+                        {
                 print ("option 2");
                 m_menuShown = false;
             }
-            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 2, buttonWidth, buttonHeight), FONT_SIZE + "Option 3</size>"))
+            if (GUI.Button(new Rect(menuX + menuPadding, buttonStartY + buttonSpacing * 2, buttonWidth, buttonHeight), new GUIContent(FONT_SIZE + "Silencer</size>", m_iconSilencer)))
             {
                 print ("option 3");
                 m_menuShown = false;
             }
-            if (GUI.Button (new Rect (menuX + menuPadding, buttonStartY + buttonSpacing * 3, buttonWidth, buttonHeight), FONT_SIZE + "Option 4</size>"))
+            if (GUI.Button(new Rect(menuX + menuPadding, buttonStartY + buttonSpacing * 3, buttonWidth, buttonHeight), new GUIContent(FONT_SIZE + "Plug</size>", m_iconPlug)))
             {
                 print ("option 4");
                 m_menuShown = false;
