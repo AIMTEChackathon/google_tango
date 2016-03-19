@@ -1,6 +1,3 @@
-/Temp 
-AndroidBuild.apk
-
 # =============== #
 # Unity generated #
 # =============== #
@@ -35,3 +32,8 @@ sysinfo.txt
 Icon?
 ehthumbs.db
 [Tt]humbs.db
+
+# ============ #
+# Android APK  #
+# ============ #
+AndroidApp.apk
