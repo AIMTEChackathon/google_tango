@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{FD37AB9C-ED33-1D83-04D3-D17C10536DA2}") = "AimtecHackathon2", "Assembly-CSharp.csproj", "{9ABC075A-874A-1F54-228F-3255DE5AA1BA}"
+EndProject
+Project("{FD37AB9C-ED33-1D83-04D3-D17C10536DA2}") = "AimtecHackathon2", "Assembly-CSharp-Editor.csproj", "{93B4074E-B72E-8D09-78D8-C94F613504C8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9ABC075A-874A-1F54-228F-3255DE5AA1BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ABC075A-874A-1F54-228F-3255DE5AA1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ABC075A-874A-1F54-228F-3255DE5AA1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ABC075A-874A-1F54-228F-3255DE5AA1BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93B4074E-B72E-8D09-78D8-C94F613504C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93B4074E-B72E-8D09-78D8-C94F613504C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93B4074E-B72E-8D09-78D8-C94F613504C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93B4074E-B72E-8D09-78D8-C94F613504C8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
