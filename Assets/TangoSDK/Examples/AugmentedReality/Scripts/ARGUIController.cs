@@ -58,6 +58,10 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     public Texture2D m_iconSilencer;
     public Texture2D m_iconPlug;
 
+	public Material m_wheelMaterial;
+	public Material m_steeringWheelMaterial;
+	public Material m_silencerMaterial;
+	public Material m_plugMaterial;
 
     private TangoApplication m_tangoApplication;
 
@@ -69,7 +73,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// <summary>
     /// If set, this is the selected marker.
     /// </summary>
-    private ARMarker m_selectedMarker;
+    private OurPlane m_selectedMarker;
 
     /// <summary>
     /// If set, this is the rectangle bounding the selected marker.
@@ -82,6 +86,8 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     private Rect m_hideAllRect;
 
     private bool m_menuShown = false;
+
+	private Material m_currentMaterial;
 
     /// <summary>
     /// Unity Start() callback, we set up some initial values here.
@@ -122,6 +128,15 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
         float menuX = centerX - (menuWidth / 2);
         float menuY = centerY - (menuHeight / 2);
         float buttonStartY = menuY + menuPadding * 3;
+		OurPlane[] planes;
+
+		if (m_currentMaterial != null) {
+			planes = FindObjectsOfType<OurPlane> ();
+			if (planes != null) {
+				planes [0].setMaterial (m_currentMaterial);
+				m_currentMaterial = null;
+			}
+		}
         
         if (m_menuShown)
         {
@@ -130,21 +145,25 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             {
                 print ("option 1");
                 m_menuShown = false;
+				m_currentMaterial = m_wheelMaterial;
             }
             if (GUI.Button(new Rect(menuX + menuPadding, buttonStartY + buttonSpacing * 1, buttonWidth, buttonHeight), new GUIContent(FONT_SIZE + "Steering Wheel</size>", m_iconSteeringWheel)))
                         {
                 print ("option 2");
                 m_menuShown = false;
+				m_currentMaterial = m_steeringWheelMaterial;
             }
             if (GUI.Button(new Rect(menuX + menuPadding, buttonStartY + buttonSpacing * 2, buttonWidth, buttonHeight), new GUIContent(FONT_SIZE + "Silencer</size>", m_iconSilencer)))
             {
                 print ("option 3");
                 m_menuShown = false;
+				m_currentMaterial = m_silencerMaterial;
             }
             if (GUI.Button(new Rect(menuX + menuPadding, buttonStartY + buttonSpacing * 3, buttonWidth, buttonHeight), new GUIContent(FONT_SIZE + "Plug</size>", m_iconPlug)))
             {
                 print ("option 4");
                 m_menuShown = false;
+				m_currentMaterial = m_plugMaterial;
             }
         }
 
@@ -175,7 +194,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             m_selectedRect = new Rect();
         }
 
-        if (GameObject.FindObjectOfType<ARMarker>() != null)
+        if (GameObject.FindObjectOfType<OurPlane>() != null)
         {
             m_hideAllRect = new Rect(Screen.width - UI_BUTTON_SIZE_X - UI_BUTTON_GAP_X,
                                      Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
@@ -183,7 +202,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                                      UI_BUTTON_SIZE_Y);
             if (GUI.Button(m_hideAllRect, FONT_SIZE + "Hide All</size>"))
             {
-                foreach (ARMarker marker in GameObject.FindObjectsOfType<ARMarker>())
+                foreach (OurPlane marker in GameObject.FindObjectsOfType<OurPlane>())
                 {
                     marker.SendMessage("Hide");
                 }
@@ -289,7 +308,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                 GameObject tapped = hitInfo.collider.gameObject;
                 if (!tapped.GetComponent<Animation>().isPlaying)
                 {
-                    m_selectedMarker = tapped.GetComponent<ARMarker>();
+                    m_selectedMarker = tapped.GetComponent<OurPlane>();
                 }
             }
             else
